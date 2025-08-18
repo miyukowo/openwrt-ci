@@ -1,4 +1,4 @@
-name: CUSTOM-JDC-AX1800-PRO-IPQ60XX-6.12-WIFI
+name: JDC-AX1800-PRO-IPQ60XX-6.12-WIFI
 
 on:
   workflow_dispatch:
@@ -14,7 +14,7 @@ env:
   CACHE_TOOLCHAIN: true
   UPLOAD_BIN_DIR: false
   FIRMWARE_RELEASE: true
-  FIRMWARE_TAG: CUSTOM-JDC-AX1800-PRO-IPQ60XX-6.12-WIFI
+  FIRMWARE_TAG: JDC-AX1800-PRO-IPQ60XX-6.12-WIFI
   TZ: Asia/Ho_Chi_Minh
 
 jobs:
@@ -166,7 +166,10 @@ jobs:
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: ${{ env.FIRMWARE_PATH }}/*
         body: |
+          ### General Info
           **This is OpenWrt Firmware for ${{ env.FIRMWARE_TAG }}**
+          JDCloud AX1800 Pro (RE-SS-01) (WIFI)
+          - Compiled by @miyukowo
           ### 📒 Firmware Info (WIFI)
           - 6.12 kernel firmware with WIFI + Wired NSS support
           - 💻 This is the OpenWrt firmware for platform: ${{ env.FIRMWARE_TAG }}
