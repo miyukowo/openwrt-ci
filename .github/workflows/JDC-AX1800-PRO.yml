@@ -181,3 +181,4 @@ jobs:
           - Kernel version: ${{ env.VERSION_KERNEL }}
           - Last update before build from ➦[Source repo](${{ env.REPO_URL }})
           - ${{ env.VERSION_INFO }}
+        draft: true
