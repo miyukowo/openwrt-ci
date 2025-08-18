@@ -167,12 +167,11 @@ jobs:
         artifacts: ${{ env.FIRMWARE_PATH }}/*
         body: |
           ### General Info
-          **This is OpenWrt Firmware for ${{ env.FIRMWARE_TAG }}**
-          JDCloud AX1800 Pro (RE-SS-01) (WIFI)
+          **This is LiBwrt (OpenWrt) firmware for ${{ env.FIRMWARE_TAG }}**
           - Compiled by @miyukowo
           ### 📒 Firmware Info (WIFI)
           - 6.12 kernel firmware with WIFI + Wired NSS support
-          - 💻 This is the OpenWrt firmware for platform: ${{ env.FIRMWARE_TAG }}
+          - 💻 This is the LiBwrt (OpenWrt) firmware for platform: ${{ env.FIRMWARE_TAG }}
           - ⚽ Firmware source: ${{ env.REPO_URL }}
           - 💝 Source branch: ${{ env.REPO_BRANCH }}
           - 🌐 Default address: 192.168.1.1
