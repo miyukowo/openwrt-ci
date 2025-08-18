@@ -3,7 +3,7 @@ name: JDC-AX1800-PRO-IPQ60XX-6.12-WIFI
 on:
   workflow_dispatch:
   schedule:
-    - cron: 0 19 * * *
+    - cron: 0 12 * * 6
 
 env:
   REPO_URL: https://github.com/LiBwrt/openwrt-6.x.git
@@ -19,7 +19,7 @@ env:
 
 jobs:
   Build:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
     - name: Check Server Performance
@@ -181,4 +181,3 @@ jobs:
           - Kernel version: ${{ env.VERSION_KERNEL }}
           - Last update before build from ➦[Source repo](${{ env.REPO_URL }})
           - ${{ env.VERSION_INFO }}
-        draft: true
