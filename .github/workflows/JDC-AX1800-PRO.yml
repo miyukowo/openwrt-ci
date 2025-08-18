@@ -8,7 +8,7 @@ on:
 env:
   REPO_URL: https://github.com/LiBwrt/openwrt-6.x.git
   REPO_BRANCH: k6.12-nss
-  CONFIG_FILE: configs/custom.config
+  CONFIG_FILE: configs/jdc-ax1800-pro.config
   DIY_SCRIPT: libwrt.sh
   CLASH_KERNEL: amd64
   CACHE_TOOLCHAIN: true
