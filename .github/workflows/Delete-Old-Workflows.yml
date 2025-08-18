@@ -3,11 +3,10 @@ name: Delete Old Workflows
 on:
   workflow_dispatch:
   schedule:
-    - cron: 0 3 * * *
-
+    - cron: 0 5 1-7 * 6
 jobs:
   Cleaning:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-24.04
 
     steps:
     - name: Delete Old Workflows
