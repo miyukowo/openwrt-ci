@@ -156,27 +156,34 @@ jobs:
         name: ${{ env.SOURCE_REPO }}-firmware-${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}-${{ env.FILE_DATE }}
         path: ${{ env.FIRMWARE_PATH }}
 
-    - name: Upload Firmware To Release
-      if: steps.compile.outputs.status == 'success' && env.FIRMWARE_RELEASE == 'true'
+    - name: Extract short commit hash
+      run: echo "SHORT_HASH=$(echo ${{ env.VERSION_INFO }} | grep -oE '[a-f0-9]{7,40}' | head -n1 | cut -c1-7)" >> $GITHUB_ENV
+    
+    - name: Release firmware
       uses: ncipollo/release-action@v1
       with:
-        name: R${{ env.DATE }} for ${{ env.FIRMWARE_TAG }}
+        name: R${{ env.FILE_DATE }}-${{ env.SHORT_HASH }} for JDC-AX1800-PRO-IPQ60XX-6.12-WIFI
         allowUpdates: false
-        tag: ${{ env.FIRMWARE_TAG }}
+        tag: ${{ env.FILE_DATE }}-${{ env.SHORT_HASH }}-JDC-AX1800-PRO-IPQ60XX-6.12-WIFI
         token: ${{ secrets.GITHUB_TOKEN }}
-        artifacts: ${{ env.FIRMWARE_PATH }}/*
+        artifacts: /home/runner/work/openwrt-ci/openwrt-ci/openwrt/bin/targets/qualcommax/ipq60xx/*
         body: |
           ### General Info
-          **This is LiBwrt (OpenWrt) firmware for ${{ env.FIRMWARE_TAG }}**
+          **This is LiBwrt (OpenWrt) firmware for JDC-AX1800-PRO-IPQ60XX-6.12-WIFI**
           - Compiled by @miyukowo
+    
           ### 📒 Firmware Info (WIFI)
           - 6.12 kernel firmware with WIFI + Wired NSS support
-          - 💻 This is the LiBwrt (OpenWrt) firmware for platform: ${{ env.FIRMWARE_TAG }}
-          - ⚽ Firmware source: ${{ env.REPO_URL }}
-          - 💝 Source branch: ${{ env.REPO_BRANCH }}
+          - 💻 Platform: JDC-AX1800-PRO-IPQ60XX-6.12-WIFI
+          - ⚽ Firmware source: https://github.com/LiBwrt/openwrt-6.x.git
+          - 💝 Source branch: k6.12-nss
           - 🌐 Default address: 192.168.1.1
           - 🔑 Default password: password
+    
           ### 🧊 Firmware Version
           - Kernel version: ${{ env.VERSION_KERNEL }}
           - Last update before build from ➦[Source repo](${{ env.REPO_URL }})
           - ${{ env.VERSION_INFO }}
+        generateReleaseNotes: false
+        makeLatest: legacy
+        replacesArtifacts: true
