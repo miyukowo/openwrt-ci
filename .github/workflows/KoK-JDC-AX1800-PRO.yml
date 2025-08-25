@@ -14,7 +14,7 @@ env:
   CACHE_TOOLCHAIN: true
   UPLOAD_BIN_DIR: false
   FIRMWARE_RELEASE: true
-  FIRMWARE_TAG: KOK-JDC-AX1800-PRO-IPQ60XX-6.12-WIFI
+  FIRMWARE_TAG: KoK-JDC-AX1800-PRO-IPQ60XX-6.12-WIFI
   TZ: Asia/Ho_Chi_Minh
 
 jobs:
@@ -156,13 +156,16 @@ jobs:
         name: ${{ env.SOURCE_REPO }}-firmware-${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}-${{ env.FILE_DATE }}
         path: ${{ env.FIRMWARE_PATH }}
 
+    - name: Extract Short Commit Hash
+      run: echo "SHORT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
     - name: Upload Firmware To Release
       if: steps.compile.outputs.status == 'success' && env.FIRMWARE_RELEASE == 'true'
       uses: ncipollo/release-action@v1
       with:
-        name: R${{ env.DATE }} for ${{ env.FIRMWARE_TAG }}
-        allowUpdates: true
-        tag: ${{ env.FIRMWARE_TAG }}
+        name: R${{ env.FILE_DATE }}-${{ env.SHORT_HASH }} for ${{ env.FIRMWARE_TAG }}
+        allowUpdates: false
+        tag: ${{ env.FILE_DATE }}-${{ env.SHORT_HASH }}-${{ env.FIRMWARE_TAG }}
         token: ${{ secrets.GITHUB_TOKEN }}
         artifacts: ${{ env.FIRMWARE_PATH }}/*
         body: |
@@ -172,7 +175,7 @@ jobs:
           - Compiled by @miyukowo
           ### 📒 Firmware Info (WIFI)
           - 6.12 kernel firmware with WIFI + Wired NSS support
-          - 💻 This is the OpenWrt firmware for platform: ${{ env.FIRMWARE_TAG }}
+          - 💻 Platform: ${{ env.FIRMWARE_TAG }}
           - ⚽ Firmware source: ${{ env.REPO_URL }}
           - 💝 Source branch: ${{ env.REPO_BRANCH }}
           - 🌐 Default address: 192.168.1.1
