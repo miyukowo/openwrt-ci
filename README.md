@@ -29,6 +29,7 @@ Click the [![](https://img.shields.io/badge/Download-Link-blueviolet.svg?style=f
 | Platform + Device | Build Status | Config File | Download |
 | :---------------: | :----------: | :---------: | :------: |
 | [![](https://img.shields.io/badge/JDCloud_AX1800_PRO-ALL-32C955.svg?logo=openwrt)](https://github.com/miyukowo/openwrt-ci/blob/main/.github/workflows/JDC-AX1800-PRO.yml) | [![](https://github.com/miyukowo/openwrt-ci/actions/workflows/JDC-AX1800-PRO.yml/badge.svg)](https://github.com/miyukowo/openwrt-ci/actions/workflows/JDC-AX1800-PRO.yml) | [![](https://img.shields.io/badge/Config-orange.svg?logo=apache-spark)](https://github.com/miyukowo/openwrt-ci/blob/main/configs/jdc-ax1800-pro.config) | [![](https://img.shields.io/badge/Download-Link-blueviolet.svg?logo=hack-the-box)](https://github.com/miyukowo/openwrt-ci/releases/) |
+| [![](https://img.shields.io/badge/JDCloud_AX1800_PRO-ALL-32C955.svg?logo=openwrt)](https://github.com/miyukowo/openwrt-ci/blob/main/.github/workflows/KOK-JDC-AX1800-PRO.yml) | [![](https://github.com/miyukowo/openwrt-ci/actions/workflows/KoK-JDC-AX1800-PRO.yml/badge.svg)](https://github.com/miyukowo/openwrt-ci/actions/workflows/KoK-JDC-AX1800-PRO.yml) | [![](https://img.shields.io/badge/Config-orange.svg?logo=apache-spark)](https://github.com/miyukowo/openwrt-ci/blob/main/configs/jdc-ax1800-pro.config) | [![](https://img.shields.io/badge/Download-Link-blueviolet.svg?logo=hack-the-box)](https://github.com/miyukowo/openwrt-ci/releases/) | 
 
 ---
 
