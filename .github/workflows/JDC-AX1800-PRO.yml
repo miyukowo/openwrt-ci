@@ -7,7 +7,7 @@ on:
 
 env:
   REPO_URL: https://github.com/LiBwrt/openwrt-6.x.git
-  REPO_BRANCH: k6.12-nss
+  REPO_BRANCH: main-nss
   CONFIG_FILE: configs/jdc-ax1800-pro.config
   DIY_SCRIPT: libwrt.sh
   CLASH_KERNEL: amd64
@@ -176,7 +176,7 @@ jobs:
           - 6.12 kernel firmware with WIFI + Wired NSS support
           - 💻 Platform: JDC-AX1800-PRO-IPQ60XX-6.12-WIFI
           - ⚽ Firmware source: https://github.com/LiBwrt/openwrt-6.x.git
-          - 💝 Source branch: k6.12-nss
+          - 💝 Source branch: main-nss
           - 🌐 Default address: 192.168.1.1
           - 🔑 Default password: password
     
