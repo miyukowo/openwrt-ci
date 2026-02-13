@@ -2,17 +2,13 @@
 	<img width="256" src="https://avatars.githubusercontent.com/u/173426529"/>
 </p>
 
-# LibWrt build for JDC AX1800 Pro
+# LibWrt build for JDC AX1800 Pro (RE-SS-01)
 
 ## Build Status
 | Workflow | Status |
 | :------: | :----: |
 | JDC-AX1800-PRO (LiBwrt) | [![](https://github.com/miyukowo/openwrt-ci/actions/workflows/JDC-AX1800-PRO.yml/badge.svg)](https://github.com/miyukowo/openwrt-ci/actions/workflows/JDC-AX1800-PRO.yml) |
 | JDC-AX1800-PRO (KoK) | [![](https://github.com/miyukowo/openwrt-ci/actions/workflows/KoK-JDC-AX1800-PRO.yml/badge.svg)](https://github.com/miyukowo/openwrt-ci/actions/workflows/KoK-JDC-AX1800-PRO.yml) |
-| IPQ60XX 6.12 WIFI | [![](https://github.com/miyukowo/openwrt-ci/actions/workflows/IPQ60XX-6.12-WIFI.yml/badge.svg)](https://github.com/miyukowo/openwrt-ci/actions/workflows/IPQ60XX-6.12-WIFI.yml) |
-| IPQ60XX 6.12 No-WIFI | [![](https://github.com/miyukowo/openwrt-ci/actions/workflows/IPQ60XX-6.12-NOWIFI.yml/badge.svg)](https://github.com/miyukowo/openwrt-ci/actions/workflows/IPQ60XX-6.12-NOWIFI.yml) |
-| IPQ60XX 24.10 6.12 WIFI | [![](https://github.com/miyukowo/openwrt-ci/actions/workflows/IPQ60XX-24.10-6.12-WIFI.yml/badge.svg)](https://github.com/miyukowo/openwrt-ci/actions/workflows/IPQ60XX-24.10-6.12-WIFI.yml) |
-| IPQ60XX 24.10 | [![](https://github.com/miyukowo/openwrt-ci/actions/workflows/IPQ60XX-24.10.yml/badge.svg)](https://github.com/miyukowo/openwrt-ci/actions/workflows/IPQ60XX-24.10.yml) |
 
 ## Disclaimer [![](https://img.shields.io/badge/-Personal_Disclaimer-FFFFFF.svg)](#disclaimer-)
 
