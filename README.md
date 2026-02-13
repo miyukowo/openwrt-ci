@@ -7,8 +7,7 @@
 ## Build Status
 | Workflow | Status |
 | :------: | :----: |
-| JDC-AX1800-PRO (LiBwrt) | [![](https://github.com/miyukowo/openwrt-ci/actions/workflows/JDC-AX1800-PRO.yml/badge.svg)](https://github.com/miyukowo/openwrt-ci/actions/workflows/JDC-AX1800-PRO.yml) |
-| JDC-AX1800-PRO (KoK) | [![](https://github.com/miyukowo/openwrt-ci/actions/workflows/KoK-JDC-AX1800-PRO.yml/badge.svg)](https://github.com/miyukowo/openwrt-ci/actions/workflows/KoK-JDC-AX1800-PRO.yml) |
+| JDC-AX1800-PRO | [![](https://github.com/miyukowo/openwrt-ci/actions/workflows/JDC-AX1800-PRO.yml/badge.svg)](https://github.com/miyukowo/openwrt-ci/actions/workflows/JDC-AX1800-PRO.yml) |
 
 ## Disclaimer [![](https://img.shields.io/badge/-Personal_Disclaimer-FFFFFF.svg)](#disclaimer-)
 
