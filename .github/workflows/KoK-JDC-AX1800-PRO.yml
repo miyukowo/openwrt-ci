@@ -1,9 +1,7 @@
-name: KOK-JDC-AX1800-PRO-IPQ60XX-6.12-WIFI
+name: "[Archived] KOK-JDC-AX1800-PRO-IPQ60XX-6.12-WIFI"
 
 on:
-  workflow_dispatch:
-  schedule:
-    - cron: 0 12 * * 6
+  workflow_dispatch: # Manual only — upstream patches currently broken
 
 jobs:
   build:
