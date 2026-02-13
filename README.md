@@ -2,8 +2,13 @@
 	<img width="256" src="https://avatars.githubusercontent.com/u/173426529"/>
 </p>
 
-# LibWrt build for JDC AX1800 Pro
-[![](https://github.com/miyukowo/openwrt-ci/actions/workflows/JDC-AX1800-PRO.yml/badge.svg)](https://github.com/miyukowo/openwrt-ci/releases)
+# LibWrt build for JDC AX1800 Pro (RE-SS-01)
+
+## Build Status
+| Workflow | Status |
+| :------: | :----: |
+| JDC-AX1800-PRO (LiBwrt) | [![](https://github.com/miyukowo/openwrt-ci/actions/workflows/JDC-AX1800-PRO.yml/badge.svg)](https://github.com/miyukowo/openwrt-ci/actions/workflows/JDC-AX1800-PRO.yml) |
+| JDC-AX1800-PRO (KoK) | [![](https://github.com/miyukowo/openwrt-ci/actions/workflows/KoK-JDC-AX1800-PRO.yml/badge.svg)](https://github.com/miyukowo/openwrt-ci/actions/workflows/KoK-JDC-AX1800-PRO.yml) |
 
 ## Disclaimer [![](https://img.shields.io/badge/-Personal_Disclaimer-FFFFFF.svg)](#disclaimer-)
 
@@ -24,12 +29,9 @@
 
 ## Firmware Download [![](https://img.shields.io/badge/-Build_Status_&_Download-FFFFFF.svg)](#firmware-download-)
 
-Click the [![](https://img.shields.io/badge/Download-Link-blueviolet.svg?style=flat&logo=hack-the-box)](https://github.com/miyukowo/openwrt-ci/releases) badge in the table below to download firmware for your device.
+Click the badge below to download firmware for your device.
 
-| Platform + Device | Build Status | Config File | Download |
-| :---------------: | :----------: | :---------: | :------: |
-| [![](https://img.shields.io/badge/JDCloud_AX1800_PRO-ALL-32C955.svg?logo=openwrt)](https://github.com/miyukowo/openwrt-ci/blob/main/.github/workflows/JDC-AX1800-PRO.yml) | [![](https://github.com/miyukowo/openwrt-ci/actions/workflows/JDC-AX1800-PRO.yml/badge.svg)](https://github.com/miyukowo/openwrt-ci/actions/workflows/JDC-AX1800-PRO.yml) | [![](https://img.shields.io/badge/Config-orange.svg?logo=apache-spark)](https://github.com/miyukowo/openwrt-ci/blob/main/configs/jdc-ax1800-pro.config) | [![](https://img.shields.io/badge/Download-Link-blueviolet.svg?logo=hack-the-box)](https://github.com/miyukowo/openwrt-ci/releases/) |
-| [![](https://img.shields.io/badge/JDCloud_AX1800_PRO-ALL-32C955.svg?logo=openwrt)](https://github.com/miyukowo/openwrt-ci/blob/main/.github/workflows/KOK-JDC-AX1800-PRO.yml) | [![](https://github.com/miyukowo/openwrt-ci/actions/workflows/KoK-JDC-AX1800-PRO.yml/badge.svg)](https://github.com/miyukowo/openwrt-ci/actions/workflows/KoK-JDC-AX1800-PRO.yml) | [![](https://img.shields.io/badge/Config-orange.svg?logo=apache-spark)](https://github.com/miyukowo/openwrt-ci/blob/main/configs/jdc-ax1800-pro.config) | [![](https://img.shields.io/badge/Download-Link-blueviolet.svg?logo=hack-the-box)](https://github.com/miyukowo/openwrt-ci/releases/) | 
+[![](https://img.shields.io/badge/Download-Releases-blueviolet.svg?style=flat&logo=hack-the-box)](https://github.com/miyukowo/openwrt-ci/releases)
 
 ---
 
@@ -38,7 +40,7 @@ Click the [![](https://img.shields.io/badge/Download-Link-blueviolet.svg?style=f
 1. Log in to GitHub and fork this project into your own repo.  
 2. Edit the corresponding file under the `configs` directory to add/remove packages, or upload your own `.config` file.  
 3. For plugin names & features, refer to this guide: [Applications Plugin Notes](https://www.right.com.cn/forum/thread-3682029-1-1.html).  
-4. Modify `diy-script.sh` if you want to change the default IP, add/remove packages, or adjust other settings.  
+4. Modify `libwrt.sh` if you want to add custom packages or adjustments.  
 5. Edit or add the `xx.yml` workflow file, then trigger the desired `Actions` workflow to start building.  
 6. Build time is ~1–3 hours. After completion, firmware will be available in [Releases](https://github.com/miyukowo/openwrt-ci/releases) under the corresponding Tag.  
 
