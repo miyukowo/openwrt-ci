@@ -1,0 +1,236 @@
+name: Build OpenWrt
+
+on:
+  workflow_call:
+    inputs:
+      repo_url:
+        description: "OpenWrt source repository URL"
+        required: true
+        type: string
+      repo_branch:
+        description: "Branch to build from"
+        required: true
+        type: string
+      config_file:
+        description: "Path to .config file"
+        required: true
+        type: string
+      diy_script:
+        description: "DIY customization script"
+        required: false
+        default: ""
+        type: string
+      firmware_tag:
+        description: "Firmware tag for release naming"
+        required: true
+        type: string
+      firmware_description:
+        description: "Short firmware description for release body"
+        required: true
+        type: string
+      install_extra_packages:
+        description: "Whether to install extra packages (netspeedtest)"
+        required: false
+        default: false
+        type: boolean
+      kernel_version_file:
+        description: "Kernel version file to grep (e.g. kernel-6.12). Leave empty to extract from manifest."
+        required: false
+        default: ""
+        type: string
+
+env:
+  TZ: Asia/Ho_Chi_Minh
+
+jobs:
+  Build:
+    runs-on: ubuntu-22.04
+
+    steps:
+    - name: Check Server Performance
+      run: |
+        echo "⚠️ WARNING"
+        echo "The allocated server performance is limited. If you select too many plugins, please pay attention to CPU performance!"
+        echo -e "Known CPU models (descending order): 7763, 8370C, 8272CL, 8171M, E5-2673 \n"
+        echo "-------------------------- CPU Info --------------------------"
+        echo "Number of physical CPUs: $(cat /proc/cpuinfo | grep "physical id" | sort | uniq | wc -l)"
+        echo -e "CPU core info: $(cat /proc/cpuinfo | grep name | cut -f2 -d: | uniq -c) \n"
+        echo "-------------------------- Memory Info --------------------------"
+        echo "Installed memory details:"
+        echo -e "$(sudo lshw -short -C memory | grep GiB) \n"
+        echo "-------------------------- Disk Info --------------------------"
+        echo "Number of disks: $(ls /dev/sd* | grep -v [1-9] | wc -l)" && df -hT
+
+    - name: Initialize Environment
+      env:
+        DEBIAN_FRONTEND: noninteractive
+      run: |
+        docker images -q | xargs -r docker rmi
+        sudo rm -rf /usr/share/dotnet /etc/apt/sources.list.d /usr/local/lib/android $AGENT_TOOLSDIRECTORY
+        sudo -E apt-get -y purge azure-cli ghc* zulu* llvm* firefox google* dotnet* powershell openjdk* mongodb* moby* || true
+        sudo -E apt-get -y update
+        sudo -E apt-get -y install $(curl -fsSL https://build-scripts.immortalwrt.org/init_build_environment.sh 2>/dev/null || curl -fsSL is.gd/depends_ubuntu_2204)
+        sudo -E apt-get -y autoremove --purge
+        sudo -E apt-get -y clean
+        sudo -E systemctl daemon-reload
+        sudo timedatectl set-timezone "$TZ"
+
+    - name: Combine Disks
+      uses: easimon/maximize-build-space@master
+      with:
+        swap-size-mb: 1024
+        temp-reserve-mb: 100
+        root-reserve-mb: 1024
+
+    - name: Checkout
+      uses: actions/checkout@v4
+
+    - name: Clone Source Code
+      run: |
+        df -hT $GITHUB_WORKSPACE
+        git clone --depth 1 -b ${{ inputs.repo_branch }} ${{ inputs.repo_url }} openwrt
+        cd openwrt
+        echo "OPENWRT_PATH=$PWD" >> $GITHUB_ENV
+        VERSION_INFO=$(git show -s --date=short --format="Author: %an<br/>Date: %cd<br/>Message: %s<br/>Hash: %H")
+        echo "VERSION_INFO=$VERSION_INFO" >> $GITHUB_ENV
+
+    - name: Extract Kernel Version
+      run: |
+        cd $OPENWRT_PATH
+        if [ -n "${{ inputs.kernel_version_file }}" ] && [ -f "target/linux/generic/${{ inputs.kernel_version_file }}" ]; then
+          VERSION_KERNEL=$(grep -oP 'LINUX_KERNEL_HASH-\K[0-9]+\.[0-9]+\.[0-9]+' "target/linux/generic/${{ inputs.kernel_version_file }}" || echo "unknown")
+        else
+          VERSION_KERNEL="extracted-after-build"
+        fi
+        echo "VERSION_KERNEL=$VERSION_KERNEL" >> $GITHUB_ENV
+
+    - name: Generate Variables
+      run: |
+        cp ${{ inputs.config_file }} $OPENWRT_PATH/.config
+        cd $OPENWRT_PATH
+        make defconfig > /dev/null 2>&1
+        SOURCE_REPO="$(echo ${{ inputs.repo_url }} | awk -F '/' '{print $(NF)}')"
+        echo "SOURCE_REPO=$SOURCE_REPO" >> $GITHUB_ENV
+        DEVICE_TARGET=$(cat .config | grep CONFIG_TARGET_BOARD | awk -F '"' '{print $2}')
+        echo "DEVICE_TARGET=$DEVICE_TARGET" >> $GITHUB_ENV
+        DEVICE_SUBTARGET=$(cat .config | grep CONFIG_TARGET_SUBTARGET | awk -F '"' '{print $2}')
+        echo "DEVICE_SUBTARGET=$DEVICE_SUBTARGET" >> $GITHUB_ENV
+
+    - name: Cache Toolchain
+      uses: HiGarfield/cachewrtbuild@main
+      with:
+        ccache: false
+        mixkey: ${{ env.SOURCE_REPO }}-${{ inputs.repo_branch }}-${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}
+        prefix: ${{ env.OPENWRT_PATH }}
+
+    - name: Install Feeds
+      run: |
+        cd $OPENWRT_PATH
+        ./scripts/feeds update -a
+        if [ "${{ inputs.install_extra_packages }}" = "true" ]; then
+          git clone --depth 1 https://github.com/sbwml/openwrt_pkgs.git package/new/custom
+          mv package/new/custom/luci-app-netspeedtest package/new
+          mv package/new/custom/speedtest-cli package/new
+          rm -rf package/new/custom
+        fi
+        ./scripts/feeds install -a
+
+    - name: Load Custom Configuration
+      run: |
+        [ -e files ] && mv files $OPENWRT_PATH/files
+        [ -e ${{ inputs.config_file }} ] && mv ${{ inputs.config_file }} $OPENWRT_PATH/.config
+        if [ -n "${{ inputs.diy_script }}" ] && [ -e "${{ inputs.diy_script }}" ]; then
+          chmod +x ${{ inputs.diy_script }}
+          cd $OPENWRT_PATH
+          $GITHUB_WORKSPACE/${{ inputs.diy_script }}
+        fi
+
+    - name: Download DL Packages
+      run: |
+        cd $OPENWRT_PATH
+        make defconfig
+        make download -j8
+        find dl -size -1024c -exec ls -l {} \;
+        find dl -size -1024c -exec rm -f {} \;
+
+    - name: Compile Firmware
+      id: compile
+      run: |
+        cd $OPENWRT_PATH
+        echo -e "$(nproc) thread compile"
+        make -j$(nproc) || make -j1 || make -j1 V=s
+        echo "status=success" >> $GITHUB_OUTPUT
+        echo "DATE=$(date +"%Y-%m-%d %H:%M:%S")" >> $GITHUB_ENV
+        echo "FILE_DATE=$(date +"%Y.%m.%d")" >> $GITHUB_ENV
+
+    - name: Check Space Usage
+      if: (!cancelled())
+      run: df -hT
+
+    - name: Upload Bin Directory
+      if: steps.compile.outputs.status == 'success'
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.SOURCE_REPO }}-bin-${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}-${{ env.FILE_DATE }}
+        path: ${{ env.OPENWRT_PATH }}/bin
+
+    - name: Organize Files
+      if: steps.compile.outputs.status == 'success'
+      run: |
+        cd $OPENWRT_PATH/bin/targets/*/*
+        cat sha256sums
+        # Extract kernel version from manifest if not already set
+        if [ "$VERSION_KERNEL" = "extracted-after-build" ]; then
+          VERSION_KERNEL=$(find -type f -name "*.manifest" -exec grep -oP '^kernel - \K.*?(?=~|-\d+-)' {} \; || echo "unknown")
+          echo "VERSION_KERNEL=$VERSION_KERNEL" >> $GITHUB_ENV
+        fi
+        cp $OPENWRT_PATH/.config build.config
+        # Handle both .apk and .ipk package formats
+        if ls $OPENWRT_PATH/bin/packages/*/*/*.apk 1>/dev/null 2>&1; then
+          mv -f $OPENWRT_PATH/bin/packages/*/*/*.apk packages
+        elif ls $OPENWRT_PATH/bin/packages/*/*/*.ipk 1>/dev/null 2>&1; then
+          mv -f $OPENWRT_PATH/bin/packages/*/*/*.ipk packages
+        fi
+        tar -zcf Packages.tar.gz packages
+        rm -rf packages feeds.buildinfo version.buildinfo
+        echo "FIRMWARE_PATH=$PWD" >> $GITHUB_ENV
+
+    - name: Upload Firmware To Artifact
+      if: steps.compile.outputs.status == 'success'
+      uses: actions/upload-artifact@v4
+      with:
+        name: ${{ env.SOURCE_REPO }}-firmware-${{ env.DEVICE_TARGET }}-${{ env.DEVICE_SUBTARGET }}-${{ env.FILE_DATE }}
+        path: ${{ env.FIRMWARE_PATH }}
+
+    - name: Extract Short Commit Hash
+      run: echo "SHORT_HASH=$(git rev-parse --short HEAD)" >> $GITHUB_ENV
+
+    - name: Release Firmware
+      if: steps.compile.outputs.status == 'success'
+      uses: ncipollo/release-action@v1
+      with:
+        name: R${{ env.FILE_DATE }}-${{ env.SHORT_HASH }} for ${{ inputs.firmware_tag }}
+        allowUpdates: false
+        tag: ${{ env.FILE_DATE }}-${{ env.SHORT_HASH }}-${{ inputs.firmware_tag }}
+        token: ${{ secrets.GITHUB_TOKEN }}
+        artifacts: ${{ env.FIRMWARE_PATH }}/*
+        body: |
+          ### General Info
+          **This is LiBwrt (OpenWrt) firmware for ${{ inputs.firmware_tag }}**
+          - Compiled by @miyukowo
+
+          ### 📒 Firmware Info
+          - ${{ inputs.firmware_description }}
+          - 💻 Platform: ${{ inputs.firmware_tag }}
+          - ⚽ Firmware source: ${{ inputs.repo_url }}
+          - 💝 Source branch: ${{ inputs.repo_branch }}
+          - 🌐 Default address: 192.168.1.1
+          - 🔑 Default password: password
+
+          ### 🧊 Firmware Version
+          - Kernel version: ${{ env.VERSION_KERNEL }}
+          - Last update before build from ➦[Source repo](${{ inputs.repo_url }})
+          - ${{ env.VERSION_INFO }}
+        generateReleaseNotes: false
+        makeLatest: legacy
+        replacesArtifacts: true
